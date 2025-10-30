@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - GIBD Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Added styles for password strength and match indicators */
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        
+        .strength-weak { color: #e74c3c; }
+        .strength-medium { color: #f39c12; }
+        .strength-strong { color: #27ae60; }
+        
+        .password-match {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        
+        .match-yes { color: #27ae60; }
+        .match-no { color: #e74c3c; }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        
+        .alert-warning {
+            background-color: #ffeaa7;
+            color: #d63031;
+            border: 1px solid #fdcb6e;
+        }
+        
+        .alert-info {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #90caf9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Account</h1>
+        <p class="subtitle">Join GIBD Services to get your API key</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name <span class="required">*</span></label>
+                    <input type="text" name="first_name" id="first_name" value="{{ first_name or '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name <span class="required">*</span></label>
+                    <input type="text" name="last_name" id="last_name" value="{{ last_name or '' }}" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Email Address <span class="required">*</span></label>
+                <input type="email" name="email" id="email" value="{{ email or '' }}" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" name="password" id="password" required minlength="8">
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password <span class="required">*</span></label>
+                    <input type="password" name="confirm_password" id="confirm_password" required minlength="8">
+                    <div class="password-match" id="passwordMatch"></div>
+                </div>
+            </div>
+            
+            <!-- Added occupation dropdown -->
+            <div class="form-group">
+                <label>Occupation <span class="required">*</span></label>
+                <select name="occupation" id="occupation" required>
+                    <option value="">Select your occupation</option>
+                    <option value="Student" {{ 'selected' if occupation == 'Student' else '' }}>Student</option>
+                    <option value="Faculty" {{ 'selected' if occupation == 'Faculty' else '' }}>Faculty</option>
+                    <option value="University Staff" {{ 'selected' if occupation == 'University Staff' else '' }}>University Staff</option>
+                    <option value="Industry" {{ 'selected' if occupation == 'Industry' else '' }}>Industry</option>
+                    <option value="Other" {{ 'selected' if occupation == 'Other' else '' }}>Other</option>
+                </select>
+            </div>
+            
+            <!-- Added country dropdown with flags -->
+            <div class="form-group">
+                <label>Country (Optional)</label>
+                <select name="country" id="country">
+                    <option value="">Select your country</option>
+                    <option value="United States" {{ 'selected' if country == 'United States' else '' }}>🇺🇸 United States</option>
+                    <option value="United Kingdom" {{ 'selected' if country == 'United Kingdom' else '' }}>🇬🇧 United Kingdom</option>
+                    <option value="Canada" {{ 'selected' if country == 'Canada' else '' }}>🇨🇦 Canada</option>
+                    <option value="Australia" {{ 'selected' if country == 'Australia' else '' }}>🇦🇺 Australia</option>
+                    <option value="Germany" {{ 'selected' if country == 'Germany' else '' }}>🇩🇪 Germany</option>
+                    <option value="France" {{ 'selected' if country == 'France' else '' }}>🇫🇷 France</option>
+                    <option value="India" {{ 'selected' if country == 'India' else '' }}>🇮🇳 India</option>
+                    <option value="China" {{ 'selected' if country == 'China' else '' }}>🇨🇳 China</option>
+                    <option value="Japan" {{ 'selected' if country == 'Japan' else '' }}>🇯🇵 Japan</option>
+                    <option value="Brazil" {{ 'selected' if country == 'Brazil' else '' }}>🇧🇷 Brazil</option>
+                    <option value="Mexico" {{ 'selected' if country == 'Mexico' else '' }}>🇲🇽 Mexico</option>
+                    <option value="Spain" {{ 'selected' if country == 'Spain' else '' }}>🇪🇸 Spain</option>
+                    <option value="Italy" {{ 'selected' if country == 'Italy' else '' }}>🇮🇹 Italy</option>
+                    <option value="Netherlands" {{ 'selected' if country == 'Netherlands' else '' }}>🇳🇱 Netherlands</option>
+                    <option value="Sweden" {{ 'selected' if country == 'Sweden' else '' }}>🇸🇪 Sweden</option>
+                    <option value="Switzerland" {{ 'selected' if country == 'Switzerland' else '' }}>🇨🇭 Switzerland</option>
+                    <option value="South Korea" {{ 'selected' if country == 'South Korea' else '' }}>🇰🇷 South Korea</option>
+                    <option value="Singapore" {{ 'selected' if country == 'Singapore' else '' }}>🇸🇬 Singapore</option>
+                    <option value="Other" {{ 'selected' if country == 'Other' else '' }}>🌍 Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number (Optional)</label>
+                <input type="tel" name="phone_number" id="phone_number" value="{{ phone_number or '' }}">
+            </div>
+            
+            <button type="submit" class="btn">Create Account</button>
+        </form>
+        
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login') }}">Log in here</a>
+        </div>
+    </div>
+    
+    <!-- Added JavaScript for real-time password validation -->
+    <script>
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const passwordMatch = document.getElementById('passwordMatch');
+        
+        // Password strength checker
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            if (password.length === 0) {
+                passwordStrength.textContent = '';
+            } else if (strength <= 2) {
+                passwordStrength.textContent = 'Weak password';
+                passwordStrength.className = 'password-strength strength-weak';
+            } else if (strength <= 3) {
+                passwordStrength.textContent = 'Medium password';
+                passwordStrength.className = 'password-strength strength-medium';
+            } else {
+                passwordStrength.textContent = 'Strong password';
+                passwordStrength.className = 'password-strength strength-strong';
+            }
+            
+            checkPasswordMatch();
+        });
+        
+        // Password match checker
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+        
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword.length === 0) {
+                passwordMatch.textContent = '';
+            } else if (password === confirmPassword) {
+                passwordMatch.textContent = '✓ Passwords match';
+                passwordMatch.className = 'password-match match-yes';
+            } else {
+                passwordMatch.textContent = '✗ Passwords do not match';
+                passwordMatch.className = 'password-match match-no';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GIBD Services</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar h1 {
+            font-size: 24px;
+        }
+        
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .support-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        
+        .support-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-card h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .api-key-list {
+            margin-top: 20px;
+        }
+        
+        .api-key-item {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .api-key-value {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-size: 14px;
+            flex: 1;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #45a049;
+        }
+        
+        .no-keys {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .usage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .usage-table th,
+        .usage-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .usage-table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .usage-table td {
+            color: #333;
+        }
+        
+        .no-usage {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .message-item {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .message-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        
+        .status-replied {
+            background: #55efc4;
+            color: #00b894;
+        }
+        
+        .message-text {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .message-reply {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .message-date {
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>GIBD Services</h1>
+        <div class="navbar-right">
+            <button class="support-icon" onclick="openSupportModal()" title="Contact Support">💬</button>
+            <span>Welcome, {{ user['first_name'] }}!</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="welcome-card">
+            <h2>Welcome to Your Dashboard</h2>
+            <p>Manage your API keys and account settings from here. Generate new API keys to integrate with GIBD Services.</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Remaining Credit</div>
+                <div class="stat-value">${{ "%.2f"|format(user['remaining_credit']) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Spent</div>
+                <div class="stat-value">${{ "%.2f"|format(total_spent) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Used Tokens</div>
+                <div class="stat-value">{{ "{:,}".format(total_tokens) }}</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Usage Over Time (Last 30 Days)</h3>
+            {% if usage_chart_data %}
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            {% else %}
+                <div class="no-usage">No usage data yet. Start using your API keys to see your usage chart.</div>
+            {% endif %}
+        </div>
+        
+        <div class="card">
+            <h3>Your Information</h3>
+            <div class="user-info">
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user['email'] }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ user['first_name'] }} {{ user['last_name'] }}</div>
+                </div>
+                {% if user['occupation'] %}
+                <div class="info-item">
+                    <div class="info-label">Occupation</div>
+                    <div class="info-value">{{ user['occupation'] }}</div>
+                </div>
+                {% endif %}
+                {% if user['country'] %}
+                <div class="info-item">
+                    <div class="info-label">Country</div>
+                    <div class="info-value">{{ user['country'] }}</div>
+                </div>
+                {% endif %}
+                {% if user['phone_number'] %}
+                <div class="info-item">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value">{{ user['phone_number'] }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Usage Statistics</h3>
+            {% if usage_stats %}
+                <table class="usage-table">
+                    <thead>
+                        <tr>
+                            <th>LLM Model</th>
+                            <th>Total Tokens</th>
+                            <th>Total Cost</th>
+                            <th>Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in usage_stats %}
+                        <tr>
+                            <td>{{ stat['llm_model'] }}</td>
+                            <td>{{ "{:,}".format(stat['total_tokens']) }}</td>
+                            <td>${{ "%.4f"|format(stat['total_cost']) }}</td>
+                            <td>{{ stat['request_count'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-usage">No usage data yet. Start using your API keys to see statistics here.</div>
+            {% endif %}
+        </div>
+        
+        <div class="card">
+            <h3>API Keys</h3>
+            <button type="button" class="btn" onclick="confirmGenerateKey()">Generate New API Key</button>
+            
+            <div class="api-key-list">
+                {% if api_keys %}
+                    {% for key in api_keys %}
+                    <div class="api-key-item">
+                        <div class="api-key-value">{{ key['api_key'] }}</div>
+                        <button class="copy-btn" onclick="copyToClipboard('{{ key['api_key'] }}')">Copy</button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-keys">No API keys generated yet. Click the button above to generate your first key.</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Support Messages</h3>
+            {% if support_messages %}
+                {% for msg in support_messages %}
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="message-date">{{ msg['created_at'] }}</span>
+                        <span class="message-status status-{{ msg['status'] }}">{{ msg['status'].upper() }}</span>
+                    </div>
+                    <div class="message-text"><strong>Your message:</strong> {{ msg['message'] }}</div>
+                    {% if msg['reply'] %}
+                    <div class="message-reply">
+                        <strong>Support reply:</strong> {{ msg['reply'] }}
+                        <div class="message-date" style="margin-top: 5px;">Replied: {{ msg['replied_at'] }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-usage">No support messages yet. Click the support icon to send a message.</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Contact Support</h3>
+                <button class="close" onclick="closeSupportModal()">&times;</button>
+            </div>
+            <form method="POST" action="{{ url_for('send_support_message') }}">
+                <textarea name="message" placeholder="Describe your issue or question..." required></textarea>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn">Send Message</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeSupportModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Generate New API Key</h3>
+                <button class="close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <p>{% if api_keys %}If you generate a new API key, your previous key will no longer work. Are you sure you want to continue?{% else %}Are you sure you want to generate a new API key?{% endif %}</p>
+            <div class="modal-buttons">
+                <button type="button" class="btn" onclick="generateKey()">Yes, Generate</button>
+                <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('API key copied to clipboard!');
+            }, function(err) {
+                alert('Failed to copy API key');
+            });
+        }
+        
+        function openSupportModal() {
+            document.getElementById('supportModal').style.display = 'block';
+        }
+        
+        function closeSupportModal() {
+            document.getElementById('supportModal').style.display = 'none';
+        }
+        
+        function confirmGenerateKey() {
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+        
+        function generateKey() {
+            fetch('{{ url_for("generate_key") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error generating API key');
+            });
+        }
+        
+        window.onclick = function(event) {
+            const supportModal = document.getElementById('supportModal');
+            const confirmModal = document.getElementById('confirmModal');
+            if (event.target == supportModal) {
+                closeSupportModal();
+            }
+            if (event.target == confirmModal) {
+                closeConfirmModal();
+            }
+        }
+        
+        {% if usage_chart_data %}
+        const ctx = document.getElementById('usageChart').getContext('2d');
+        const usageChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for data in usage_chart_data %}'{{ data["date"] }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Tokens Used',
+                    data: [{% for data in usage_chart_data %}{{ data["tokens"] }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+    </script>
+</body>
+</html>
