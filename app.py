@@ -17,7 +17,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # Email configuration
 SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_PORT = 465
 SENDER_EMAIL = "gibd.lab@gmail.com"
 SENDER_PASSWORD = "jkrp shng hzsv uzow"
 SUPPORT_EMAIL = "ali6011201@gmail.com"
@@ -200,8 +200,7 @@ GIBD Services Team
     msg.attach(MIMEText(html, "html"))
     
     try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
         return True
@@ -249,8 +248,7 @@ def send_password_reset_email(email, token, first_name):
     msg.attach(MIMEText(html, "html"))
     
     try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
         return True
@@ -283,8 +281,7 @@ def send_support_notification(user_email, user_name, message):
     msg.attach(MIMEText(html, "html"))
     
     try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, SUPPORT_EMAIL, msg.as_string())
         return True
@@ -325,8 +322,7 @@ def send_reply_notification(email, first_name):
     msg.attach(MIMEText(html, "html"))
     
     try:
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
         return True
